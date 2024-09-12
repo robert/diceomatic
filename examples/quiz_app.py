@@ -1,24 +1,24 @@
 import random
 
 import streamlit as st
-from lib import (
-    Add,
-    AdditionCrosses10Boundary,
-    AdditionCrosses100Boundary,
+from streamlit.components.v1 import html
+from sumchef import (
     Equal,
     IsDivisibleBy,
     IsGreaterThan,
     IsLessThan,
-    Literal,
-    Variable,
+    Lit,
+    Multiply,
     expression_string,
-    find_bindings,
+    gen_bindings,
+    variables,
 )
-from streamlit.components.v1 import html
 
-x = Variable("x")
-y = Variable("y")
-z = Variable("z")
+st.set_page_config(page_title="Quiz time!", page_icon="⚽", layout="wide")
+
+
+var_names = ["x", "y", "z"]
+x, y, z = variables(var_names)
 
 vars = {
     "x": x,
@@ -26,31 +26,17 @@ vars = {
     "z": z,
 }
 
-lhs = Add(x, y)
+lhs = Multiply(x, y)
 rhs = z
 
 constraints = [
-    # IsGreaterThan(y, x),
-    IsGreaterThan(x, Literal(100)),
-    IsLessThan(y, Literal(10)),
-    AdditionCrosses10Boundary(x, y),
-    # IsLessThan(x, Literal(20)),
-    # IsLessThan(y, Literal(20)),
+    IsGreaterThan(x, Lit(10)),
+    IsDivisibleBy(x, Lit(10)),
+    IsLessThan(y, Lit(10)),
     Equal(lhs, rhs),
 ]
-constraints = [
-    # IsGreaterThan(y, x),
-    IsGreaterThan(x, Literal(100)),
-    IsLessThan(y, Literal(100)),
-    IsDivisibleBy(x, Literal(10)),  # Remove to make harder
-    IsDivisibleBy(y, Literal(10)),
-    AdditionCrosses100Boundary(x, y),
-    # IsLessThan(x, Literal(20)),
-    # IsLessThan(y, Literal(20)),
-    Equal(lhs, rhs),
-]
-domains = {v.name: list(range(0, 1000)) for v in [x, y, z]}
-bindings = find_bindings(["x", "y", "z"], domains, constraints)
+domains = {var_name: list(range(1, 1000)) for var_name in var_names}
+bindings = gen_bindings(var_names, domains, constraints)
 
 
 def get_next_problem():
@@ -58,22 +44,9 @@ def get_next_problem():
 
 
 def main():
-    st.set_page_config(
-        page_title="Baloney Plays Football", page_icon="⚽", layout="wide"
-    )
-
     if "problem" not in st.session_state:
         st.session_state.problem = get_next_problem()
-        st.session_state.hold_out = random.choice(
-            [
-                y,
-                z,
-                z,
-                z,
-                z,
-                z,
-            ]
-        ).name
+        st.session_state.hold_out = z.name
         st.session_state.correct_answer = False
 
     if st.session_state.correct_answer:
@@ -98,7 +71,7 @@ def main():
         )
 
     st.markdown(
-        f"<div style='font-size: 150px; text-align: center;'>{display_text}</div>",
+        f"<div style='font-size: 100px; text-align: center;'>{display_text}</div>",
         unsafe_allow_html=True,
     )
     st.markdown("<br/>" * 2, unsafe_allow_html=True)

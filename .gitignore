@@ -1,0 +1,3 @@
+venv/**
+.devcontainer/**
+**/.claude/settings.local.json
