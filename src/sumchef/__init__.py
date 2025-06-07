@@ -492,7 +492,7 @@ def expression_string(
         elif isinstance(expr, Multiply):
             left = _generate(expr.operand1, "*")
             right = _generate(expr.operand2, "*")
-            return f"{left} * {right}"
+            return f"{left} x {right}"
         else:
             raise ValueError(f"Unsupported expression type: {type(expr)}")
 

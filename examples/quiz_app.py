@@ -1,72 +1,79 @@
-import random
-
 import streamlit as st
 from streamlit.components.v1 import html
 from sumchef import (
+    Add,
+    AdditionCrosses10Boundary,
     Equal,
-    IsDivisibleBy,
-    IsGreaterThan,
     IsLessThan,
     Lit,
     Multiply,
     expression_string,
     gen_bindings,
+    uniform_domains,
     variables,
 )
 
-st.set_page_config(page_title="Quiz time!", page_icon="⚽", layout="wide")
-
-
-var_names = ["x", "y", "z"]
-x, y, z = variables(var_names)
-
-vars = {
-    "x": x,
-    "y": y,
-    "z": z,
-}
-
-lhs = Multiply(x, y)
-rhs = z
-
-constraints = [
-    IsGreaterThan(x, Lit(10)),
-    IsDivisibleBy(x, Lit(10)),
-    IsLessThan(y, Lit(10)),
-    Equal(lhs, rhs),
-]
-domains = {var_name: list(range(1, 1000)) for var_name in var_names}
-bindings = gen_bindings(var_names, domains, constraints)
+st.set_page_config(page_title="Extreme Dice Football!", page_icon="⚽", layout="wide")
 
 
 def get_next_problem():
-    return next(bindings)
+    return next(st.session_state.bindings)
 
 
 def main():
+    st.markdown(
+        "<h1 style='text-align: center;'>⚽⚽⚽ Extreme Dice Football! ⚽⚽⚽</h1><br/>",
+        unsafe_allow_html=True,
+    )
     if "problem" not in st.session_state:
+        vars = variables(["a", "b", "c", "d", "e"])
+        a, b, c, d, e = vars
+
+        lhs = Add(Multiply(a, b), Multiply(c, d))
+        rhs = e
+
+        constraints = [
+            AdditionCrosses10Boundary(Multiply(a, b), Multiply(c, d)),
+            IsLessThan(Multiply(a, b), Lit(20)),
+            Equal(lhs, rhs),
+        ]
+        domains = uniform_domains(vars, range(2, 100))
+
+        st.session_state.vars = vars
+        st.session_state.bindings = gen_bindings(vars, domains, constraints)
+        st.session_state.lhs = lhs
+        st.session_state.rhs = rhs
+
         st.session_state.problem = get_next_problem()
-        st.session_state.hold_out = z.name
+        st.session_state.hold_out = e
         st.session_state.correct_answer = False
 
     if st.session_state.correct_answer:
         display_text = (
             expression_string(
-                lhs, st.session_state.problem, underline=vars[st.session_state.hold_out]
+                st.session_state.lhs,
+                st.session_state.problem,
+                underline=st.session_state.hold_out,
             )
             + " = "
             + expression_string(
-                rhs, st.session_state.problem, underline=vars[st.session_state.hold_out]
+                st.session_state.rhs,
+                st.session_state.problem,
+                underline=st.session_state.hold_out,
             )
         )
     else:
         display_text = (
             expression_string(
-                lhs, st.session_state.problem, hold_out=vars[st.session_state.hold_out]
+                st.session_state.lhs,
+                st.session_state.problem,
+                hold_out=st.session_state.hold_out,
             )
             + " = "
             + expression_string(
-                rhs, st.session_state.problem, hold_out=vars[st.session_state.hold_out]
+                st.session_state.rhs,
+                st.session_state.problem,
+                hold_out=st.session_state.hold_out,
             )
         )
 
@@ -93,7 +100,7 @@ def main():
                 ):  # This will trigger on Enter key or button click
                     try:
                         user_guess = int(user_guess)
-                        if user_guess == vars[st.session_state.hold_out].evaluate(
+                        if user_guess == st.session_state.hold_out.evaluate(
                             st.session_state.problem
                         ):
                             st.session_state.correct_answer = True
@@ -115,7 +122,7 @@ def main():
                         "Next Question (Press Enter)", use_container_width=True
                     ):
                         st.session_state.problem = get_next_problem()
-                        st.session_state.hold_out = random.choice([x, y, z]).name
+                        st.session_state.hold_out = st.session_state.vars[-1]
                         st.session_state.correct_answer = False
                         st.rerun()
 
