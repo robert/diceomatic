@@ -1,6 +1,6 @@
 # SumChef
 
-SumChef is a Python library for generating targeted maths quizzes that exercise specific skills and difficulties. Check out [my blog post](https://robertheaton.com/sumchef) for the story behind its creation.
+SumChef is a DSL for children's dice games and maths quizzes. Check out [my blog post](https://robertheaton.com/sumchef) for the story behind its creation.
 
 ## Example usage
 
