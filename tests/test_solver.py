@@ -1,4 +1,4 @@
-from sumchef import (
+from diceomatic import (
     Add,
     AdditionCrosses10Boundary,
     Equal,
@@ -11,7 +11,6 @@ from sumchef import (
     expression_string,
     find_bindings,
     uniform_domains,
-    variables,
 )
 
 

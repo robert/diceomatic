@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "sumchef"
+name = "diceomatic"
 version = "0.1.0"
-description = "Generate maths quizzes using powerful, flexible specifications."
+description = "A DSL for children's dice games and maths quizzes."
 authors = [
     { name = "Robert Heaton", email = "robqheaton@gmail.com.com" },
 ]
@@ -14,8 +14,8 @@ requires-python = ">=3.8"
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/robert/sumchef"
-Repository = "https://github.com/robert/sumchef"
+Homepage = "https://github.com/robert/diceomatic"
+Repository = "https://github.com/robert/diceomatic"
 
 [project.optional-dependencies]
 dev = [

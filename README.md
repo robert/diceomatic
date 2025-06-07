@@ -1,10 +1,10 @@
-# SumChef
+# diceomatic
 
-SumChef is a DSL for children's dice games and maths quizzes. Check out [my blog post](https://robertheaton.com/sumchef) for the story behind its creation.
+diceomatic is a DSL for children's dice games and maths quizzes. Check out [my blog post](https://robertheaton.com/diceomatic) for the story behind its creation.
 
 ## Example usage
 
-Suppose you want to use SumChef to generate an infinite stream of questions where:
+Suppose you want to use diceomatic to generate an infinite stream of questions where:
 
 * `A*B + C*D = E`
 * The addition crosses a 10 boundary
@@ -15,11 +15,11 @@ Suppose you want to use SumChef to generate an infinite stream of questions wher
 To do this you'd write:
 
 ```python
-from sumchef import *
+from diceomatic import *
 
 # Declare the variables
-var_names = ["a", "b", "c", "d", "e"]
-a, b, c, d, e = variables(var_names)
+vs = variables(["a", "b", "c", "d", "e"])
+a, b, c, d, e = vs
 
 # Declare the form of the equation
 lhs = Add(Multiply(a, b), Multiply(c, d))
@@ -83,7 +83,7 @@ See the streamlit app in `examples/` for inspiration.
 ## Installation
 
 ```bash
-pip install sumchef
+pip install diceomatic
 ```
 
 ## Example Applications
@@ -145,7 +145,7 @@ You can create custom constraints by subclassing the `Constraint` abstract base 
 Here's an example of creating a custom constraint that ensures a value is even:
 
 ```python
-from sumchef import *
+from diceomatic import *
 
 class IsEven(Constraint):
     def __init__(self, value: Value):
@@ -161,15 +161,15 @@ class IsEven(Constraint):
 Usage:
 
 ```python
-from sumchef import *
+from diceomatic import *
 
-var_names = ["x", "y", "z"]
-x, y, z = variables(var_names)
+vs = variables(["x", "y", "z"])
+x, y, z = vs
 
 constraints = [IsEven(x), IsEven(y), Equal(Add(x, y), z)]
 
-domains = uniform_domains(var_names, range(100))
-solutions = find_bindings(var_names, domains, constraints)
+domains = uniform_domains(vs, range(100))
+solutions = find_bindings(vs, domains, constraints)
 ```
 
 This would give you sums where you practice adding only even numbers, like `12 + 38 = 50` and `60 + 14 = 74`. 
